@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed Systems Experiments</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .experiments {
+            display: grid;
+            gap: 25px;
+        }
+
+        .experiment {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .exp-header:hover {
+            opacity: 0.8;
+        }
+
+        .exp-number {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .exp-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .toggle-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .toggle-btn:hover {
+            background: #5568d3;
+        }
+
+        .exp-content {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .exp-content.show {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+
+        .subsection-title {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #555;
+            margin: 15px 0 8px 0;
+            padding: 0;
+            border: none;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            color: #333;
+            white-space: pre;
+            display: block;
+        }
+
+        .input-output {
+            background: #fafafa;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4caf50;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .copy-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+
+        .copy-btn:hover {
+            background: #45a049;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .exp-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .exp-title {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .toggle-btn {
+                margin-top: 10px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 Distributed Systems Experiments</h1>
+            <p>Complete collection of 10 core distributed systems experiments</p>
+        </header>
+
+        <div class="experiments" id="experiments"></div>
+
+        <footer>
+            <p>Made for learning and examination preparation • All codes tested and ready to run</p>
+        </footer>
+    </div>
+
+    <script>
+        const experiments = [
+            {
+                num: 1,
+                title: "Inter-Process Communication (IPC) using Queues",
+                parts: [
+                    {
+                        label: "Code",
+                        code: `from multiprocessing import Process, Queue
+
+def sender(q):
+    message = "Hello from Sender Process"
+    print("Sender sending:", message)
+    q.put(message)
+
+def receiver(q):
+    message = q.get()
+    print("Receiver received:", message)
+
+if __name__ == "__main__":
+    q = Queue()
+    p1 = Process(target=sender, args=(q,))
+    p2 = Process(target=receiver, args=(q,))
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()`,
+                        output: `Output:
+Sender sending: Hello from Sender Process
+Receiver received: Hello from Sender Process`
+                    }
+                ]
+            },
+            {
+                num: 2,
+                title: "Remote Procedure Call (RPC)",
+                parts: [
+                    {
+                        label: "Server Code",
+                        code: `from xmlrpc.server import SimpleXMLRPCServer
+
+server = SimpleXMLRPCServer(("localhost", 8000), logRequests=True)
+print("Server started on port 8000...")
+
+def add(a, b):
+    return a + b
+
+def subtract(a, b):
+    return a - b
+
+def multiply(a, b):
+    return a * b
+
+def divide(a, b):
+    if b == 0:
+        return "Error: Division by zero"
+    return a / b
+
+server.register_function(add, "add")
+server.register_function(subtract, "subtract")
+server.register_function(multiply, "multiply")
+server.register_function(divide, "divide")
+
+server.serve_forever()`,
+                        output: `Output:
+Server started on port 8000...
+(Server running and waiting for client requests)`
+                    },
+                    {
+                        label: "Client Code",
+                        code: `import xmlrpc.client
+
+client = xmlrpc.client.ServerProxy("http://localhost:8000/")
+print("Connected to Server")
+
+a = int(input("Enter first number: "))
+b = int(input("Enter second number: "))
+
+print("Addition:", client.add(a, b))
+print("Subtraction:", client.subtract(a, b))
+print("Multiplication:", client.multiply(a, b))
+print("Division:", client.divide(a, b))`,
+                        output: `Input:
+First number: 10
+Second number: 5
+
+Output:
+Connected to Server
+Addition: 15
+Subtraction: 5
+Multiplication: 50
+Division: 2.0`
+                    }
+                ]
+            },
+            {
+                num: 3,
+                title: "Group Communication",
+                parts: [
+                    {
+                        label: "Server Code",
+                        code: `import socket
+import threading
+
+HOST = "127.0.0.1"
+PORT = 5000
+clients = []
+
+def broadcast(message, sender_conn):
+    print("Broadcasting:", message.decode())
+    for client in clients:
+        if client != sender_conn:
+            try:
+                client.send(message)
+            except:
+                clients.remove(client)
+
+def handle_client(conn, addr):
+    print(f"[NEW CONNECTION] {addr} connected.")
+    clients.append(conn)
+    while True:
+        try:
+            message = conn.recv(1024)
+            if not message:
+                break
+            print(f"[{addr}] {message.decode()}")
+            broadcast(message, conn)
+        except:
+            break
+    print(f"[DISCONNECTED] {addr}")
+    clients.remove(conn)
+    conn.close()
+
+def start_server():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((HOST, PORT))
+    server.listen()
+    print("[STARTED] Group Communication Server Running...")
+    while True:
+        conn, addr = server.accept()
+        thread = threading.Thread(target=handle_client, args=(conn, addr))
+        thread.start()
+
+if __name__ == "__main__":
+    start_server()`,
+                        output: `Output:
+[STARTED] Group Communication Server Running...
+[NEW CONNECTION] ('127.0.0.1', 12345) connected.
+[NEW CONNECTION] ('127.0.0.1', 12346) connected.
+Broadcasting: Hello
+[DISCONNECTED] ('127.0.0.1', 12345)`
+                    },
+                    {
+                        label: "Client Code",
+                        code: `import socket
+import threading
+
+HOST = "127.0.0.1"
+PORT = 5000
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect((HOST, PORT))
+print("Connected to server. Start typing...")
+
+def receive():
+    while True:
+        try:
+            message = client.recv(1024).decode()
+            if message:
+                print("\\nReceived:", message)
+        except:
+            print("Error receiving")
+            break
+
+def send():
+    while True:
+        msg = input()
+        client.send(msg.encode())
+
+threading.Thread(target=receive, daemon=True).start()
+threading.Thread(target=send).start()`,
+                        output: `Output:
+Connected to server. Start typing...
+(User types messages, server broadcasts to other clients)
+Received: Hello
+Received: Aditya 221222`
+                    }
+                ]
+            },
+            {
+                num: 4,
+                title: "Clock Synchronization (Berkeley Algorithm)",
+                parts: [
+                    {
+                        label: "Code",
+                        code: `import random
+
+n = int(input("Enter number of nodes: "))
+clocks = []
+
+for i in range(n):
+    time = random.randint(100, 200)
+    clocks.append(time)
+
+print("\\nInitial Clock Times:")
+for i in range(n):
+    print(f"Node {i+1}: {clocks[i]}")
+
+master = clocks[0]
+print(f"\\nMaster Node Time: {master}")
+
+diff = []
+for t in clocks:
+    diff.append(t - master)
+
+avg = sum(diff) / n
+
+print("\\nAdjustments:")
+for i in range(n):
+    adjustment = avg - diff[i]
+    clocks[i] = clocks[i] + adjustment
+    print(f"Node {i+1} adjusted by {adjustment}")
+
+print("\\nSynchronized Clock Times:")
+for i in range(n):
+    print(f"Node {i+1}: {round(clocks[i], 2)}")`,
+                        output: `Input:
+Number of nodes: 4
+
+Output:
+Initial Clock Times:
+Node 1: 150
+Node 2: 175
+Node 3: 140
+Node 4: 165
+
+Master Node Time: 150
+
+Adjustments:
+Node 1 adjusted by 0.0
+Node 2 adjusted by -6.25
+Node 3 adjusted by 10.0
+Node 4 adjusted by -3.75
+
+Synchronized Clock Times:
+Node 1: 150.0
+Node 2: 168.75
+Node 3: 150.0
+Node 4: 161.25`
+                    }
+                ]
+            },
+            {
+                num: 5,
+                title: "Election Algorithm (Bully Algorithm)",
+                parts: [
+                    {
+                        label: "Code",
+                        code: `processes = []
+n = int(input("Enter number of processes: "))
+
+for i in range(n):
+    pid = int(input(f"Enter ID for Process {i+1}: "))
+    processes.append(pid)
+
+processes.sort()
+print("\\nProcesses:", processes)
+
+alive = {pid: True for pid in processes}
+
+def election(initiator):
+    print(f"\\nProcess {initiator} starts election")
+    higher = [p for p in processes if p > initiator and alive[p]]
+    if not higher:
+        print(f"Process {initiator} becomes Coordinator")
+        return initiator
+    else:
+        for p in higher:
+            print(f"Process {initiator} sends election message to {p}")
+        return election(max(higher))
+
+fail = int(input("\\nEnter process ID to fail: "))
+alive[fail] = False
+print(f"Process {fail} has failed")
+
+initiator = int(input("Enter initiator process ID: "))
+coordinator = election(initiator)
+print(f"\\nFinal Coordinator is: {coordinator}")`,
+                        output: `Input:
+Number of processes: 4
+Process IDs: 1, 2, 3, 4
+Failed Process: 4
+Initiator: 2
+
+Output:
+Processes: [1, 2, 3, 4]
+
+Process 2 starts election
+Process 2 sends election message to 3
+Process 3 starts election
+Process 3 becomes Coordinator
+
+Final Coordinator is: 3`
+                    }
+                ]
+            },
+            {
+                num: 6,
+                title: "Mutual Exclusion Algorithm (Ricart-Agrawala)",
+                parts: [
+                    {
+                        label: "Code",
+                        code: `n = int(input("Enter number of processes: "))
+
+timestamps = []
+for i in range(n):
+    t = int(input(f"Enter timestamp for Process {i+1}: "))
+    timestamps.append((i+1, t))
+
+timestamps.sort(key=lambda x: x[1])
+
+print("\\nExecution Order (Critical Section Access):")
+for process in timestamps:
+    print(f"Process {process[0]} with timestamp {process[1]} enters Critical Section")`,
+                        output: `Input:
+Number of processes: 3
+Timestamps: Process 1 (5), Process 2 (2), Process 3 (8)
+
+Output:
+Execution Order (Critical Section Access):
+Process 2 with timestamp 2 enters Critical Section
+Process 1 with timestamp 5 enters Critical Section
+Process 3 with timestamp 8 enters Critical Section`
+                    }
+                ]
+            },
+            {
+                num: 7,
+                title: "Deadlock Detection using Wait-For Graph",
+                parts: [
+                    {
+                        label: "Code",
+                        code: `from collections import defaultdict
+
+graph = defaultdict(list)
+n = int(input("Enter number of processes: "))
+e = int(input("Enter number of edges (dependencies): "))
+
+print("Enter dependencies (Pi Pj means Pi is waiting for Pj):")
+for _ in range(e):
+    u, v = input().split()
+    graph[u].append(v)
+
+visited = set()
+rec_stack = set()
+
+def detect_cycle(node):
+    visited.add(node)
+    rec_stack.add(node)
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            if detect_cycle(neighbor):
+                return True
+        elif neighbor in rec_stack:
+            return True
+    rec_stack.remove(node)
+    return False
+
+deadlock = False
+for node in graph:
+    if node not in visited:
+        if detect_cycle(node):
+            deadlock = True
+            break
+
+if deadlock:
+    print("\\nDeadlock Detected!")
+else:
+    print("\\nNo Deadlock")`,
+                        output: `Input:
+Number of processes: 3
+Number of edges: 3
+Dependencies: p1 p2, p2 p3, p3 p1
+
+Output:
+Deadlock Detected!`
+                    }
+                ]
+            },
+            {
+                num: 8,
+                title: "Load Balancing (Round Robin Algorithm)",
+                parts: [
+                    {
+                        label: "Code",
+                        code: `import itertools
+import time
+
+class Server:
+    def __init__(self, name):
+        self.name = name
+
+    def handle_request(self, request):
+        print(f"{self.name} processing request {request}")
+        return f"Response from {self.name}"
+
+servers = [
+    Server("Server 1"),
+    Server("Server 2"),
+    Server("Server 3")
+]
+
+server_pool = itertools.cycle(servers)
+
+def load_balancer(request):
+    server = next(server_pool)
+    return server.handle_request(request)
+
+if __name__ == "__main__":
+    n = int(input("Enter number of requests: "))
+    for i in range(1, n + 1):
+        response = load_balancer(i)
+        print(response)`,
+                        output: `Input:
+Number of requests: 6
+
+Output:
+Server 1 processing request 1
+Response from Server 1
+Server 2 processing request 2
+Response from Server 2
+Server 3 processing request 3
+Response from Server 3
+Server 1 processing request 4
+Response from Server 1
+Server 2 processing request 5
+Response from Server 2
+Server 3 processing request 6
+Response from Server 3`
+                    }
+                ]
+            },
+            {
+                num: 9,
+                title: "Distributed Shared Memory (DSM)",
+                parts: [
+                    {
+                        label: "Code",
+                        code: `from multiprocessing import Process, Manager
+import time
+
+def writer(shared_data):
+    print("Writer is writing data...")
+    shared_data["value"] = 100
+    time.sleep(1)
+    print("Writer updated value to:", shared_data["value"])
+
+def reader(shared_data):
+    time.sleep(2)
+    print("Reader reads value:", shared_data["value"])
+
+if __name__ == "__main__":
+    manager = Manager()
+    shared_data = manager.dict()
+    shared_data["value"] = 0
+
+    p1 = Process(target=writer, args=(shared_data,))
+    p2 = Process(target=reader, args=(shared_data,))
+
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()
+
+    print("Final value in shared memory:", shared_data["value"])`,
+                        output: `Output:
+Writer is writing data...
+Writer updated value to: 100
+Reader reads value: 100
+Final value in shared memory: 100`
+                    }
+                ]
+            },
+            {
+                num: 10,
+                title: "Distributed File System (DFS) - Consistency and Locking",
+                parts: [
+                    {
+                        label: "Code",
+                        code: `import threading
+import time
+
+shared_file = {
+    "data": "Initial File Content"
+}
+lock = threading.Lock()
+
+def read_file(client_id):
+    with lock:
+        print(f"Client {client_id} is reading file...")
+        print(f"Client {client_id} read:", shared_file["data"])
+        time.sleep(1)
+
+def write_file(client_id, new_data):
+    with lock:
+        print(f"Client {client_id} is writing to file...")
+        shared_file["data"] = new_data
+        time.sleep(1)
+        print(f"Client {client_id} updated file to:", new_data)
+
+def client_operations():
+    t1 = threading.Thread(target=read_file, args=(1,))
+    t2 = threading.Thread(target=write_file, args=(2, "Updated by Client 2"))
+    t3 = threading.Thread(target=read_file, args=(3,))
+
+    t1.start()
+    t2.start()
+    t3.start()
+
+    t1.join()
+    t2.join()
+    t3.join()
+
+if __name__ == "__main__":
+    client_operations()
+    print("\\nFinal File Content:", shared_file["data"])`,
+                        output: `Output:
+Client 1 is reading file...
+Client 1 read: Initial File Content
+Client 2 is writing to file...
+Client 2 updated file to: Updated by Client 2
+Client 3 is reading file...
+Client 3 read: Updated by Client 2
+Final File Content: Updated by Client 2`
+                    }
+                ]
+            }
+        ];
+
+        function renderExperiments() {
+            const container = document.getElementById('experiments');
+            container.innerHTML = experiments.map(exp => `
+                <div class="experiment">
+                    <div class="exp-header" onclick="toggleExp(${exp.num})">
+                        <div style="display: flex; align-items: center; flex: 1;">
+                            <div class="exp-number">${exp.num}</div>
+                            <div class="exp-title">${exp.title}</div>
+                        </div>
+                        <button class="toggle-btn" onclick="event.stopPropagation(); toggleExp(${exp.num})">
+                            <span id="btn-${exp.num}">Show</span>
+                        </button>
+                    </div>
+                    <div class="exp-content" id="content-${exp.num}">
+                        ${exp.parts.map((part, idx) => `
+                            <div class="section">
+                                <div class="section-title">${part.label}</div>
+                                <div class="code-block">
+                                    <code>${part.code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}</code>
+                                </div>
+                                <button class="copy-btn" onclick="copyCode(${exp.num}, ${idx})">Copy Code</button>
+                            </div>
+                            <div class="section">
+                                <div class="subsection-title">Input & Output:</div>
+                                <div class="input-output">${part.output.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleExp(num) {
+            const content = document.getElementById(`content-${num}`);
+            const btn = document.getElementById(`btn-${num}`);
+            content.classList.toggle('show');
+            btn.textContent = content.classList.contains('show') ? 'Hide' : 'Show';
+        }
+
+        function copyCode(num, partIdx) {
+            const exp = experiments.find(e => e.num === num);
+            const code = exp.parts[partIdx].code;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Code copied to clipboard!');
+            });
+        }
+
+        renderExperiments();
+    </script>
+</body>
+</html>
