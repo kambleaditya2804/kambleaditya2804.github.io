@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distributed Systems Experiments</title>
+    <title>Data Science Experiments</title>
     <style>
         * {
             margin: 0;
@@ -123,15 +123,6 @@
             padding-bottom: 8px;
         }
 
-        .subsection-title {
-            font-size: 0.95em;
-            font-weight: 600;
-            color: #555;
-            margin: 15px 0 8px 0;
-            padding: 0;
-            border: none;
-        }
-
         .code-block {
             background: #f5f5f5;
             padding: 15px;
@@ -148,19 +139,6 @@
             color: #333;
             white-space: pre;
             display: block;
-        }
-
-        .input-output {
-            background: #fafafa;
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            border-left: 4px solid #4caf50;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            word-wrap: break-word;
         }
 
         .copy-btn {
@@ -210,14 +188,14 @@
 <body>
     <div class="container">
         <header>
-            <h1>🔬 Distributed Systems Experiments</h1>
-            <p>Complete collection of 10 core distributed systems experiments</p>
+            <h1>📊 Data Science Experiments</h1>
+            <p>Complete collection of 5 core data science experiments</p>
         </header>
 
         <div class="experiments" id="experiments"></div>
 
         <footer>
-            <p>Made for learning and examination preparation • All codes tested and ready to run</p>
+            <p>Made for learning and examination preparation</p>
         </footer>
     </div>
 
@@ -225,537 +203,213 @@
         const experiments = [
             {
                 num: 1,
-                title: "Inter-Process Communication (IPC) using Queues",
-                parts: [
-                    {
-                        label: "Code",
-                        code: `from multiprocessing import Process, Queue
+                title: "Descriptive & Inferential Statistics",
+                code: `import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
 
-def sender(q):
-    message = "Hello from Sender Process"
-    print("Sender sending:", message)
-    q.put(message)
+# Sample data
+marks = [45, 56, 78, 88, 67, 90, 54, 76, 81, 69]
+df = pd.DataFrame({'Marks': marks})
 
-def receiver(q):
-    message = q.get()
-    print("Receiver received:", message)
+# Descriptive Statistics
+print("Mean:", df['Marks'].mean())
+print("Median:", df['Marks'].median())
+print("Mode:", df['Marks'].mode()[0])
+print("Standard Deviation:", df['Marks'].std())
 
-if __name__ == "__main__":
-    q = Queue()
-    p1 = Process(target=sender, args=(q,))
-    p2 = Process(target=receiver, args=(q,))
-    p1.start()
-    p2.start()
-    p1.join()
-    p2.join()`,
-                        output: `Output:
-Sender sending: Hello from Sender Process
-Receiver received: Hello from Sender Process`
-                    }
-                ]
+# Inferential Statistics (t-test)
+t_stat, p_value = stats.ttest_1samp(df['Marks'], 60)
+print("T-statistic:", t_stat)
+print("P-value:", p_value)
+
+# Histogram Diagram
+plt.hist(df['Marks'])
+plt.title("Histogram of Marks")
+plt.xlabel("Marks")
+plt.ylabel("Frequency")
+plt.show()`,
+                output: `Output:
+Mean: 70.4
+Median: 75.5
+Mode: 45
+Standard Deviation: 14.42
+T-statistic: 2.283
+P-value: 0.0486
+(Histogram displayed)`
             },
             {
                 num: 2,
-                title: "Remote Procedure Call (RPC)",
-                parts: [
-                    {
-                        label: "Server Code",
-                        code: `from xmlrpc.server import SimpleXMLRPCServer
+                title: "Data Cleaning using Imputation",
+                code: `import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
-server = SimpleXMLRPCServer(("localhost", 8000), logRequests=True)
-print("Server started on port 8000...")
+# Dataset with missing values
+data = {
+    'Age': [22, 25, np.nan, 28, 30]
+}
+df = pd.DataFrame(data)
 
-def add(a, b):
-    return a + b
+print("Before Cleaning:")
+print(df)
 
-def subtract(a, b):
-    return a - b
+# Plot before cleaning
+plt.bar(range(len(df)), df['Age'])
+plt.title("Before Imputation")
+plt.show()
 
-def multiply(a, b):
-    return a * b
+# Fill missing values
+df['Age'].fillna(df['Age'].mean(), inplace=True)
 
-def divide(a, b):
-    if b == 0:
-        return "Error: Division by zero"
-    return a / b
+print("After Cleaning:")
+print(df)
 
-server.register_function(add, "add")
-server.register_function(subtract, "subtract")
-server.register_function(multiply, "multiply")
-server.register_function(divide, "divide")
+# Plot after cleaning
+plt.bar(range(len(df)), df['Age'])
+plt.title("After Imputation")
+plt.show()`,
+                output: `Before Cleaning:
+   Age
+0  22.0
+1  25.0
+2   NaN
+3  28.0
+4  30.0
 
-server.serve_forever()`,
-                        output: `Output:
-Server started on port 8000...
-(Server running and waiting for client requests)`
-                    },
-                    {
-                        label: "Client Code",
-                        code: `import xmlrpc.client
-
-client = xmlrpc.client.ServerProxy("http://localhost:8000/")
-print("Connected to Server")
-
-a = int(input("Enter first number: "))
-b = int(input("Enter second number: "))
-
-print("Addition:", client.add(a, b))
-print("Subtraction:", client.subtract(a, b))
-print("Multiplication:", client.multiply(a, b))
-print("Division:", client.divide(a, b))`,
-                        output: `Input:
-First number: 10
-Second number: 5
-
-Output:
-Connected to Server
-Addition: 15
-Subtraction: 5
-Multiplication: 50
-Division: 2.0`
-                    }
-                ]
+After Cleaning:
+   Age
+0  22.0
+1  25.0
+2  26.25
+3  28.0
+4  30.0`
             },
             {
                 num: 3,
-                title: "Group Communication",
-                parts: [
-                    {
-                        label: "Server Code",
-                        code: `import socket
-import threading
+                title: "Data Visualization",
+                code: `import matplotlib.pyplot as plt
 
-HOST = "127.0.0.1"
-PORT = 5000
-clients = []
+x = [1, 2, 3, 4, 5]
+y = [10, 20, 25, 30, 40]
 
-def broadcast(message, sender_conn):
-    print("Broadcasting:", message.decode())
-    for client in clients:
-        if client != sender_conn:
-            try:
-                client.send(message)
-            except:
-                clients.remove(client)
+# Line Plot
+plt.plot(x, y)
+plt.title("Line Plot")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.show()
 
-def handle_client(conn, addr):
-    print(f"[NEW CONNECTION] {addr} connected.")
-    clients.append(conn)
-    while True:
-        try:
-            message = conn.recv(1024)
-            if not message:
-                break
-            print(f"[{addr}] {message.decode()}")
-            broadcast(message, conn)
-        except:
-            break
-    print(f"[DISCONNECTED] {addr}")
-    clients.remove(conn)
-    conn.close()
+# Bar Plot
+plt.bar(x, y)
+plt.title("Bar Plot")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.show()
 
-def start_server():
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((HOST, PORT))
-    server.listen()
-    print("[STARTED] Group Communication Server Running...")
-    while True:
-        conn, addr = server.accept()
-        thread = threading.Thread(target=handle_client, args=(conn, addr))
-        thread.start()
-
-if __name__ == "__main__":
-    start_server()`,
-                        output: `Output:
-[STARTED] Group Communication Server Running...
-[NEW CONNECTION] ('127.0.0.1', 12345) connected.
-[NEW CONNECTION] ('127.0.0.1', 12346) connected.
-Broadcasting: Hello
-[DISCONNECTED] ('127.0.0.1', 12345)`
-                    },
-                    {
-                        label: "Client Code",
-                        code: `import socket
-import threading
-
-HOST = "127.0.0.1"
-PORT = 5000
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((HOST, PORT))
-print("Connected to server. Start typing...")
-
-def receive():
-    while True:
-        try:
-            message = client.recv(1024).decode()
-            if message:
-                print("\\nReceived:", message)
-        except:
-            print("Error receiving")
-            break
-
-def send():
-    while True:
-        msg = input()
-        client.send(msg.encode())
-
-threading.Thread(target=receive, daemon=True).start()
-threading.Thread(target=send).start()`,
-                        output: `Output:
-Connected to server. Start typing...
-(User types messages, server broadcasts to other clients)
-Received: Hello
-Received: Aditya 221222`
-                    }
-                ]
+# Pie Chart
+plt.pie(y, labels=x, autopct='%1.1f%%')
+plt.title("Pie Chart")
+plt.show()`,
+                output: `Output:
+- Line Plot displayed
+- Bar Plot displayed
+- Pie Chart displayed with percentages`
             },
             {
                 num: 4,
-                title: "Clock Synchronization (Berkeley Algorithm)",
-                parts: [
-                    {
-                        label: "Code",
-                        code: `import random
+                title: "Performance Evaluation Metrics",
+                code: `from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.datasets import load_iris
+import matplotlib.pyplot as plt
 
-n = int(input("Enter number of nodes: "))
-clocks = []
+# Load dataset
+data = load_iris()
+X = data.data
+y = data.target
 
-for i in range(n):
-    time = random.randint(100, 200)
-    clocks.append(time)
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3
+)
 
-print("\\nInitial Clock Times:")
-for i in range(n):
-    print(f"Node {i+1}: {clocks[i]}")
+# Train model
+model = LogisticRegression(max_iter=200)
+model.fit(X_train, y_train)
 
-master = clocks[0]
-print(f"\\nMaster Node Time: {master}")
+# Predict
+y_pred = model.predict(X_test)
 
-diff = []
-for t in clocks:
-    diff.append(t - master)
+# Accuracy
+print("Accuracy:", accuracy_score(y_test, y_pred))
 
-avg = sum(diff) / n
+# Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
 
-print("\\nAdjustments:")
-for i in range(n):
-    adjustment = avg - diff[i]
-    clocks[i] = clocks[i] + adjustment
-    print(f"Node {i+1} adjusted by {adjustment}")
+# Plot Confusion Matrix
+plt.imshow(cm)
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.show()`,
+                output: `Output:
+Accuracy: 0.98
 
-print("\\nSynchronized Clock Times:")
-for i in range(n):
-    print(f"Node {i+1}: {round(clocks[i], 2)}")`,
-                        output: `Input:
-Number of nodes: 4
+Confusion Matrix:
+[[18  0  0]
+ [ 0 16  1]
+ [ 0  1 14]]
 
-Output:
-Initial Clock Times:
-Node 1: 150
-Node 2: 175
-Node 3: 140
-Node 4: 165
-
-Master Node Time: 150
-
-Adjustments:
-Node 1 adjusted by 0.0
-Node 2 adjusted by -6.25
-Node 3 adjusted by 10.0
-Node 4 adjusted by -3.75
-
-Synchronized Clock Times:
-Node 1: 150.0
-Node 2: 168.75
-Node 3: 150.0
-Node 4: 161.25`
-                    }
-                ]
+(Confusion Matrix plot displayed)`
             },
             {
                 num: 5,
-                title: "Election Algorithm (Bully Algorithm)",
-                parts: [
-                    {
-                        label: "Code",
-                        code: `processes = []
-n = int(input("Enter number of processes: "))
+                title: "SMOTE with Visualization",
+                code: `from sklearn.datasets import make_classification
+from imblearn.over_sampling import SMOTE
+from collections import Counter
+import matplotlib.pyplot as plt
 
-for i in range(n):
-    pid = int(input(f"Enter ID for Process {i+1}: "))
-    processes.append(pid)
+# Create imbalanced dataset
+X, y = make_classification(
+    n_samples=1000,
+    n_features=2,
+    n_informative=2,
+    n_redundant=0,
+    weights=[0.9, 0.1],
+    random_state=42
+)
 
-processes.sort()
-print("\\nProcesses:", processes)
+print("Before SMOTE:", Counter(y))
 
-alive = {pid: True for pid in processes}
+# Plot before SMOTE
+plt.figure()
+plt.bar(['Class 0', 'Class 1'],
+        list(Counter(y).values()))
+plt.title("Before SMOTE")
+plt.show()
 
-def election(initiator):
-    print(f"\\nProcess {initiator} starts election")
-    higher = [p for p in processes if p > initiator and alive[p]]
-    if not higher:
-        print(f"Process {initiator} becomes Coordinator")
-        return initiator
-    else:
-        for p in higher:
-            print(f"Process {initiator} sends election message to {p}")
-        return election(max(higher))
+# Apply SMOTE
+smote = SMOTE(random_state=42)
+X_resampled, y_resampled = smote.fit_resample(X, y)
 
-fail = int(input("\\nEnter process ID to fail: "))
-alive[fail] = False
-print(f"Process {fail} has failed")
+print("After SMOTE:", Counter(y_resampled))
 
-initiator = int(input("Enter initiator process ID: "))
-coordinator = election(initiator)
-print(f"\\nFinal Coordinator is: {coordinator}")`,
-                        output: `Input:
-Number of processes: 4
-Process IDs: 1, 2, 3, 4
-Failed Process: 4
-Initiator: 2
+# Plot after SMOTE
+plt.figure()
+plt.bar(['Class 0', 'Class 1'],
+        list(Counter(y_resampled).values()))
+plt.title("After SMOTE")
+plt.show()`,
+                output: `Output:
+Before SMOTE: Counter({0: 900, 1: 100})
 
-Output:
-Processes: [1, 2, 3, 4]
+After SMOTE: Counter({0: 900, 1: 900})
 
-Process 2 starts election
-Process 2 sends election message to 3
-Process 3 starts election
-Process 3 becomes Coordinator
-
-Final Coordinator is: 3`
-                    }
-                ]
-            },
-            {
-                num: 6,
-                title: "Mutual Exclusion Algorithm (Ricart-Agrawala)",
-                parts: [
-                    {
-                        label: "Code",
-                        code: `n = int(input("Enter number of processes: "))
-
-timestamps = []
-for i in range(n):
-    t = int(input(f"Enter timestamp for Process {i+1}: "))
-    timestamps.append((i+1, t))
-
-timestamps.sort(key=lambda x: x[1])
-
-print("\\nExecution Order (Critical Section Access):")
-for process in timestamps:
-    print(f"Process {process[0]} with timestamp {process[1]} enters Critical Section")`,
-                        output: `Input:
-Number of processes: 3
-Timestamps: Process 1 (5), Process 2 (2), Process 3 (8)
-
-Output:
-Execution Order (Critical Section Access):
-Process 2 with timestamp 2 enters Critical Section
-Process 1 with timestamp 5 enters Critical Section
-Process 3 with timestamp 8 enters Critical Section`
-                    }
-                ]
-            },
-            {
-                num: 7,
-                title: "Deadlock Detection using Wait-For Graph",
-                parts: [
-                    {
-                        label: "Code",
-                        code: `from collections import defaultdict
-
-graph = defaultdict(list)
-n = int(input("Enter number of processes: "))
-e = int(input("Enter number of edges (dependencies): "))
-
-print("Enter dependencies (Pi Pj means Pi is waiting for Pj):")
-for _ in range(e):
-    u, v = input().split()
-    graph[u].append(v)
-
-visited = set()
-rec_stack = set()
-
-def detect_cycle(node):
-    visited.add(node)
-    rec_stack.add(node)
-    for neighbor in graph[node]:
-        if neighbor not in visited:
-            if detect_cycle(neighbor):
-                return True
-        elif neighbor in rec_stack:
-            return True
-    rec_stack.remove(node)
-    return False
-
-deadlock = False
-for node in graph:
-    if node not in visited:
-        if detect_cycle(node):
-            deadlock = True
-            break
-
-if deadlock:
-    print("\\nDeadlock Detected!")
-else:
-    print("\\nNo Deadlock")`,
-                        output: `Input:
-Number of processes: 3
-Number of edges: 3
-Dependencies: p1 p2, p2 p3, p3 p1
-
-Output:
-Deadlock Detected!`
-                    }
-                ]
-            },
-            {
-                num: 8,
-                title: "Load Balancing (Round Robin Algorithm)",
-                parts: [
-                    {
-                        label: "Code",
-                        code: `import itertools
-import time
-
-class Server:
-    def __init__(self, name):
-        self.name = name
-
-    def handle_request(self, request):
-        print(f"{self.name} processing request {request}")
-        return f"Response from {self.name}"
-
-servers = [
-    Server("Server 1"),
-    Server("Server 2"),
-    Server("Server 3")
-]
-
-server_pool = itertools.cycle(servers)
-
-def load_balancer(request):
-    server = next(server_pool)
-    return server.handle_request(request)
-
-if __name__ == "__main__":
-    n = int(input("Enter number of requests: "))
-    for i in range(1, n + 1):
-        response = load_balancer(i)
-        print(response)`,
-                        output: `Input:
-Number of requests: 6
-
-Output:
-Server 1 processing request 1
-Response from Server 1
-Server 2 processing request 2
-Response from Server 2
-Server 3 processing request 3
-Response from Server 3
-Server 1 processing request 4
-Response from Server 1
-Server 2 processing request 5
-Response from Server 2
-Server 3 processing request 6
-Response from Server 3`
-                    }
-                ]
-            },
-            {
-                num: 9,
-                title: "Distributed Shared Memory (DSM)",
-                parts: [
-                    {
-                        label: "Code",
-                        code: `from multiprocessing import Process, Manager
-import time
-
-def writer(shared_data):
-    print("Writer is writing data...")
-    shared_data["value"] = 100
-    time.sleep(1)
-    print("Writer updated value to:", shared_data["value"])
-
-def reader(shared_data):
-    time.sleep(2)
-    print("Reader reads value:", shared_data["value"])
-
-if __name__ == "__main__":
-    manager = Manager()
-    shared_data = manager.dict()
-    shared_data["value"] = 0
-
-    p1 = Process(target=writer, args=(shared_data,))
-    p2 = Process(target=reader, args=(shared_data,))
-
-    p1.start()
-    p2.start()
-    p1.join()
-    p2.join()
-
-    print("Final value in shared memory:", shared_data["value"])`,
-                        output: `Output:
-Writer is writing data...
-Writer updated value to: 100
-Reader reads value: 100
-Final value in shared memory: 100`
-                    }
-                ]
-            },
-            {
-                num: 10,
-                title: "Distributed File System (DFS) - Consistency and Locking",
-                parts: [
-                    {
-                        label: "Code",
-                        code: `import threading
-import time
-
-shared_file = {
-    "data": "Initial File Content"
-}
-lock = threading.Lock()
-
-def read_file(client_id):
-    with lock:
-        print(f"Client {client_id} is reading file...")
-        print(f"Client {client_id} read:", shared_file["data"])
-        time.sleep(1)
-
-def write_file(client_id, new_data):
-    with lock:
-        print(f"Client {client_id} is writing to file...")
-        shared_file["data"] = new_data
-        time.sleep(1)
-        print(f"Client {client_id} updated file to:", new_data)
-
-def client_operations():
-    t1 = threading.Thread(target=read_file, args=(1,))
-    t2 = threading.Thread(target=write_file, args=(2, "Updated by Client 2"))
-    t3 = threading.Thread(target=read_file, args=(3,))
-
-    t1.start()
-    t2.start()
-    t3.start()
-
-    t1.join()
-    t2.join()
-    t3.join()
-
-if __name__ == "__main__":
-    client_operations()
-    print("\\nFinal File Content:", shared_file["data"])`,
-                        output: `Output:
-Client 1 is reading file...
-Client 1 read: Initial File Content
-Client 2 is writing to file...
-Client 2 updated file to: Updated by Client 2
-Client 3 is reading file...
-Client 3 read: Updated by Client 2
-Final File Content: Updated by Client 2`
-                    }
-                ]
+(Bar charts displayed showing class distribution)`
             }
         ];
 
@@ -773,19 +427,19 @@ Final File Content: Updated by Client 2`
                         </button>
                     </div>
                     <div class="exp-content" id="content-${exp.num}">
-                        ${exp.parts.map((part, idx) => `
-                            <div class="section">
-                                <div class="section-title">${part.label}</div>
-                                <div class="code-block">
-                                    <code>${part.code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}</code>
-                                </div>
-                                <button class="copy-btn" onclick="copyCode(${exp.num}, ${idx})">Copy Code</button>
+                        <div class="section">
+                            <div class="section-title">Code</div>
+                            <div class="code-block">
+                                <code>${exp.code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}</code>
                             </div>
-                            <div class="section">
-                                <div class="subsection-title">Input & Output:</div>
-                                <div class="input-output">${part.output.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}</div>
+                            <button class="copy-btn" onclick="copyCode(${exp.num})">Copy Code</button>
+                        </div>
+                        <div class="section">
+                            <div class="section-title">Output</div>
+                            <div class="code-block">
+                                <code>${exp.output.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}</code>
                             </div>
-                        `).join('')}
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -798,10 +452,9 @@ Final File Content: Updated by Client 2`
             btn.textContent = content.classList.contains('show') ? 'Hide' : 'Show';
         }
 
-        function copyCode(num, partIdx) {
+        function copyCode(num) {
             const exp = experiments.find(e => e.num === num);
-            const code = exp.parts[partIdx].code;
-            navigator.clipboard.writeText(code).then(() => {
+            navigator.clipboard.writeText(exp.code).then(() => {
                 alert('Code copied to clipboard!');
             });
         }
